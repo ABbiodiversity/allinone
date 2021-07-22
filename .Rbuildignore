@@ -1,0 +1,14 @@
+.git*
+.DS_Store
+.*~
+^README\.Rmd$
+^README\.md$
+.git*
+.DS_Store
+.*~
+^.*\.Rproj$
+^\.Rproj\.user$
+^docs$
+^_pkgdown\.yml$
+^pkgdown$
+^COEFS\.RData$

@@ -1,0 +1,65 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.path = "README-",
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+# allinone
+
+> All-in-on model based custom predictions
+
+Install
+
+```{r eval=FALSE}
+remotes::install_github("ABbiodiversity/allinone")
+```
+
+Load the package, then download and load the coefs, etc.
+
+```{r}
+library(allinone)
+
+#ai_dowload_coefs()
+
+ai_load_coefs()
+
+tab <- ai_species()
+str(tab)
+
+## example data to see what is needed and how it is formatted
+load(system.file("extdata/example.RData", package="allinone"))
+
+## define species and bootstrap id
+spp <- "AlderFlycatcher"
+i <- 1
+
+## use composition
+z1 <- ai_predict(spp, 
+  spclim=spclim, 
+  veghf=p_veghf, 
+  soilhf=p_soilhf,
+  i=i)
+str(z1)
+
+## averaging predictions
+Combo <- spclim$wN * rowSums(z1$north) + (1-spclim$wN) * rowSums(z1$south)
+str(Combo)
+
+## use land cover classes
+z2 <- ai_predict(spp, 
+  spclim=spclim, 
+  veghf=spclim$veghf, 
+  soilhf=spclim$soilhf,
+  i=i)
+str(z2)
+```
+
