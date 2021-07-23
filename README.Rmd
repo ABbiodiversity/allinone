@@ -30,9 +30,8 @@ library(allinone)
 
 #ai_dowload_coefs()
 
-names(allinone:::.ai1)
 ai_load_coefs()
-names(allinone:::.ai1)
+
 tab <- ai_species()
 str(tab)
 

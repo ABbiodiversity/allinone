@@ -16,12 +16,9 @@ library(allinone)
 
 #ai_dowload_coefs()
 
-names(allinone:::.ai1)
-## character(0)
 ai_load_coefs()
 ## [INFO] Loading coefs
-names(allinone:::.ai1)
-## [1] "COEFS"
+
 tab <- ai_species()
 str(tab)
 ## 'data.frame':    1050 obs. of  21 variables:
