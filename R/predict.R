@@ -26,11 +26,13 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
     ## for all the math methods to work
     TMP <- Matrix(sparse=TRUE)
 
+    VECTOR <- FALSE
     if (!is.null(veghf)) {
         if (is.null(dim(veghf))) {
             p_veghf <- methods::as(stats::model.matrix(~x-1,
                 data.frame(x=as.character(veghf))), "dgCMatrix")
             colnames(p_veghf) <- substr(colnames(p_veghf), 2, nchar(colnames(p_veghf)))
+            VECTOR <- TRUE
         } else {
             p_veghf <- veghf
         }
@@ -42,6 +44,7 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
             p_soilhf <- methods::as(stats::model.matrix(~x-1,
                 data.frame(x=as.character(soilhf))), "dgCMatrix")
             colnames(p_soilhf) <- substr(colnames(p_soilhf), 2, nchar(colnames(p_soilhf)))
+            VECTOR <- TRUE
         } else {
             p_soilhf <- soilhf
         }
@@ -277,6 +280,10 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
         }
     }
 
+    if (VECTOR) {
+        NNcr <- rowSums(NNcr)
+        NScr <- rowSums(NScr)
+    }
     list(north=NNcr, south=NScr)
 
 }

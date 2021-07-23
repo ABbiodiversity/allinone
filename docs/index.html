@@ -77,21 +77,33 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#allinone" class="anchor"></a>allinone</h1></div>
 <blockquote>
-<p>All-in-on model based custom predictions</p>
+<p>All-in-on model based custom predictions for species in Alberta</p>
 </blockquote>
-<p>Install</p>
+<div id="install" class="section level2">
+<h2 class="hasAnchor">
+<a href="#install" class="anchor"></a>Install</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ABbiodiversity/allinone"</span><span class="op">)</span></code></pre></div>
-<p>Load the package, then download and load the coefs, etc.</p>
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org">"remotes"</a></span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ABbiodiversity/allinone"</span><span class="op">)</span></code></pre></div>
+<p>You will need data and coefficients from the <a href="https://github.com/ABbiodiversity/allinone-coefs">ABbiodiversity/allinone-coefs</a> repository. Clone or download the contents in zip format and extract into a folder (<code>dir</code> in the example).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dir</span> <span class="op">&lt;-</span> <span class="st">"~/repos/allinone-coefs"</span></code></pre></div>
+<p>If you don’t need the spatial raster files from the ABbiodiversity/allinone-coefs, the <code>ai_doanload_coefs()</code> function will grab the coefficients for you and you’ll be ready to roll:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ABbiodiversity/allinone">allinone</a></span><span class="op">)</span>
 
 <span class="co">#ai_dowload_coefs()</span>
 
 <span class="fu"><a href="reference/coefs.html">ai_load_coefs</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">## [INFO] Loading coefs</span>
-
-<span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/helper.html">ai_species</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">## [INFO] Loading coefs</span></code></pre></div>
+</div>
+<div id="command-line-usage" class="section level2">
+<h2 class="hasAnchor">
+<a href="#command-line-usage" class="anchor"></a>Command line usage</h2>
+<p>See all the 1050 species that we have coefficients for:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/helper.html">ai_species</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">tab</span><span class="op">)</span>
 <span class="co">## 'data.frame':    1050 obs. of  21 variables:</span>
 <span class="co">##  $ SpeciesID     : chr  "Bryoria.fuscescens.glabra.lanestris.vrangiana" "Candelaria.pacifica" "Cetraria.aculeata.muricata" "Cetraria.arenaria" ...</span>
@@ -114,17 +126,93 @@
 <span class="co">##  $ R2North       : num  0.494 0.15 NA NA 0.09 0.336 0.214 0.3 0.352 NA ...</span>
 <span class="co">##  $ R2South       : num  0.356 0.236 0.327 0.359 0.188 0.306 0.213 0.4 0.221 0.297 ...</span>
 <span class="co">##  $ Comments      : chr  NA NA NA NA ...</span>
-<span class="co">##  $ Group         : chr  "lichens" "lichens" "lichens" "lichens" ...</span>
-
-<span class="co">## example data to see what is needed and how it is formatted</span>
+<span class="co">##  $ Group         : chr  "lichens" "lichens" "lichens" "lichens" ...</span></code></pre></div>
+<div id="predictor-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#predictor-data" class="anchor"></a>Predictor data</h3>
+<p>We use an example data set that shows you how to organize the data:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## example data to see what is needed and how it is formatted</span>
 <span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/example.RData"</span>, package<span class="op">=</span><span class="st">"allinone"</span><span class="op">)</span><span class="op">)</span>
 
-<span class="co">## define species and bootstrap id</span>
-<span class="va">spp</span> <span class="op">&lt;-</span> <span class="st">"AlderFlycatcher"</span>
-<span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">1</span>
-<span class="co"># 1:2880, 1:231</span>
+<span class="co">## space climate data frame + veg/soil classes</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">spclim</span><span class="op">)</span>
+<span class="co">## 'data.frame':    30 obs. of  26 variables:</span>
+<span class="co">##  $ POINT_X             : num  -113 -111 -113 -113 -114 ...</span>
+<span class="co">##  $ POINT_Y             : num  49.6 51.4 49.3 51.3 49.6 ...</span>
+<span class="co">##  $ NSRNAME             : Factor w/ 21 levels "Alpine","Athabasca Plain",..: 13 6 13 8 13 13 6 6 6 8 ...</span>
+<span class="co">##  $ NRNAME              : Factor w/ 6 levels "Boreal","Canadian Shield",..: 4 4 4 4 4 4 4 4 4 4 ...</span>
+<span class="co">##  $ LUF_NAME            : Factor w/ 7 levels "Lower Athabasca",..: 5 4 5 5 5 4 5 4 5 5 ...</span>
+<span class="co">##  $ AHM                 : num  37.6 40.6 34.1 33 27.1 36.1 46.4 42.2 38.7 28.6 ...</span>
+<span class="co">##  $ PET                 : int  668 630 660 623 634 632 699 672 672 662 ...</span>
+<span class="co">##  $ FFP                 : int  119 114 112 111 107 113 126 119 118 112 ...</span>
+<span class="co">##  $ MAP                 : int  399 320 434 409 532 371 317 322 385 521 ...</span>
+<span class="co">##  $ MAT                 : num  5 3 4.8 3.5 4.4 3.4 4.7 3.6 4.9 4.9 ...</span>
+<span class="co">##  $ MCMT                : num  -9.4 -13.9 -8.7 -12 -8.4 -12.6 -12.3 -14.1 -9.7 -8.3 ...</span>
+<span class="co">##  $ MWMT                : num  18 17.7 17.3 16.9 16.4 17.4 19.6 18.8 18.1 17.3 ...</span>
+<span class="co">##  $ pAspen              : num  0.000202 0.21 0.001266 0.01 0.006599 ...</span>
+<span class="co">##  $ pWater              : num  0.001382 0.014561 0.003223 0.000396 0.002973 ...</span>
+<span class="co">##  $ pSoil               : num  0.999 0.985 0.997 1 0.997 ...</span>
+<span class="co">##  $ wN                  : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ PeaceRiver          : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ NSR1CentralMixedwood: num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ NSR1DryMixedwood    : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ NSR1Foothills       : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ NSR1Mountain        : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ NSR1North           : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ NSR1Parkland        : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ NSR1Shield          : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ veghf               : chr  "Crop" "RoughP" "Crop" "Crop" ...</span>
+<span class="co">##  $ soilhf              : chr  "Crop" "RoughP" "Crop" "Crop" ...</span>
 
-<span class="co">## use composition</span>
+<span class="co">## veg+HF composition data matrix</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">p_veghf</span><span class="op">)</span>
+<span class="co">##  [1] "Bare"           "RoughP"         "Crop"           "TameP"         </span>
+<span class="co">##  [5] "Industrial"     "Mine"           "Rural"          "EnSoftLin"     </span>
+<span class="co">##  [9] "HardLin"        "TrSoftLin"      "EnSeismic"      "Urban"         </span>
+<span class="co">## [13] "Wellsites"      "Deciduous1"     "CCDeciduous1"   "CCDeciduous2"  </span>
+<span class="co">## [17] "CCDeciduous3"   "CCDeciduous4"   "CCDeciduousR"   "Deciduous2"    </span>
+<span class="co">## [21] "Deciduous3"     "Deciduous4"     "Deciduous5"     "Deciduous6"    </span>
+<span class="co">## [25] "Deciduous7"     "Deciduous8"     "DeciduousR"     "GraminoidFen"  </span>
+<span class="co">## [29] "GrassHerb"      "Marsh"          "Mixedwood1"     "CCMixedwood1"  </span>
+<span class="co">## [33] "CCMixedwood2"   "CCMixedwood3"   "CCMixedwoodR"   "Mixedwood2"    </span>
+<span class="co">## [37] "CCMixedwood4"   "Mixedwood3"     "Mixedwood4"     "Mixedwood5"    </span>
+<span class="co">## [41] "Mixedwood6"     "Mixedwood7"     "Mixedwood8"     "MixedwoodR"    </span>
+<span class="co">## [45] "Pine1"          "CCPine1"        "CCPine2"        "CCPine3"       </span>
+<span class="co">## [49] "CCPine4"        "CCPineR"        "Pine2"          "Pine3"         </span>
+<span class="co">## [53] "Pine4"          "Pine5"          "Pine6"          "Pine7"         </span>
+<span class="co">## [57] "Pine8"          "PineR"          "Shrub"          "ShrubbyBog"    </span>
+<span class="co">## [61] "ShrubbyFen"     "ShrubbySwamp"   "SnowIce"        "WhiteSpruce1"  </span>
+<span class="co">## [65] "CCWhiteSpruce1" "CCWhiteSpruce2" "CCWhiteSpruce3" "CCWhiteSpruce4"</span>
+<span class="co">## [69] "CCWhiteSpruceR" "WhiteSpruce2"   "WhiteSpruce3"   "WhiteSpruce4"  </span>
+<span class="co">## [73] "WhiteSpruce5"   "WhiteSpruce6"   "WhiteSpruce7"   "WhiteSpruce8"  </span>
+<span class="co">## [77] "WhiteSpruceR"   "TreedBog1"      "TreedBog2"      "TreedBog3"     </span>
+<span class="co">## [81] "TreedBog4"      "TreedBog5"      "TreedBog6"      "TreedBog7"     </span>
+<span class="co">## [85] "TreedBog8"      "TreedBogR"      "TreedFen1"      "TreedFen2"     </span>
+<span class="co">## [89] "TreedFen3"      "TreedFen4"      "TreedFen5"      "TreedFen6"     </span>
+<span class="co">## [93] "TreedFen7"      "TreedFen8"      "TreedFenR"      "TreedSwamp"</span>
+
+<span class="co">## soil+HF composition data matrix</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">p_soilhf</span><span class="op">)</span>
+<span class="co">##  [1] "RapidDrain" "Crop"       "RoughP"     "TameP"      "Industrial"</span>
+<span class="co">##  [6] "Mine"       "Rural"      "EnSoftLin"  "HardLin"    "TrSoftLin" </span>
+<span class="co">## [11] "EnSeismic"  "Wellsites"  "Blowout"    "Urban"      "ClaySub"   </span>
+<span class="co">## [16] "Other"      "Loamy"      "SandyLoam"  "ThinBreak"</span></code></pre></div>
+</div>
+<div id="predict-for-a-species" class="section level3">
+<h3 class="hasAnchor">
+<a href="#predict-for-a-species" class="anchor"></a>Predict for a species</h3>
+<p>You need to define the species ID (use the <code>tab</code> object to find out) and the bootstrap ID (<code>i</code>). The bootstrap ID can be between 1 and 100 (only 1 for mammals and habitat elements).</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## define species and bootstrap id</span>
+<span class="va">spp</span> <span class="op">&lt;-</span> <span class="st">"AlderFlycatcher"</span>
+<span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">1</span></code></pre></div>
+<div id="composition-data" class="section level4">
+<h4 class="hasAnchor">
+<a href="#composition-data" class="anchor"></a>Composition data</h4>
+<p>You can use composition data, i.e. giving the areas or proportions of different landcover types (columns) in a spatial unit (rows). The corresponding relative abundance values will be returned in a matrix format:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## use composition</span>
 <span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preds.html">ai_predict</a></span><span class="op">(</span><span class="va">spp</span>, 
   spclim<span class="op">=</span><span class="va">spclim</span>, 
   veghf<span class="op">=</span><span class="va">p_veghf</span>, 
@@ -140,9 +228,14 @@
 <span class="co">##  $ south: num [1:30, 1:19] 0.00 0.00 6.64e-07 0.00 1.41e-05 ...</span>
 <span class="co">##   ..- attr(*, "dimnames")=List of 2</span>
 <span class="co">##   .. ..$ : chr [1:30] "1167_502" "964_613" "1194_487" "973_442" ...</span>
-<span class="co">##   .. ..$ : chr [1:19] "RapidDrain" "Crop" "RoughP" "TameP" ...</span>
-
-<span class="co">## sector effects</span>
+<span class="co">##   .. ..$ : chr [1:19] "RapidDrain" "Crop" "RoughP" "TameP" ...</span></code></pre></div>
+</div>
+<div id="sector-effects" class="section level4">
+<h4 class="hasAnchor">
+<a href="#sector-effects" class="anchor"></a>Sector effects</h4>
+<p>Having such a matrix format is ideal when further aggregation is to e performad on the output, e.g. when calculating sector effects. In the example we use only the current landscape here, and show how to use model weights (<code>wN</code>) to average the north and south results in the overlap zone:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## sector effects</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/psolymos/mefa4">mefa4</a></span><span class="op">)</span>
 <span class="va">lt</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/helper.html">ai_classes</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">ltn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mefa4/man/nonDuplicated.html">nonDuplicated</a></span><span class="op">(</span><span class="va">lt</span><span class="op">$</span><span class="va">north</span>, <span class="va">Label</span>, <span class="cn">TRUE</span><span class="op">)</span>
@@ -166,10 +259,16 @@
 <span class="co">##         Native    Agriculture     RuralUrban         Energy Transportation </span>
 <span class="co">##    0.610374698    0.076370845    0.005830417    0.022772096    0.015636447 </span>
 <span class="co">##       Forestry </span>
-<span class="co">##    0.178632312</span>
-
-
-<span class="co">## use land cover classes</span>
+<span class="co">##    0.178632312</span></code></pre></div>
+</div>
+<div id="classified-landcover-data" class="section level4">
+<h4 class="hasAnchor">
+<a href="#classified-landcover-data" class="anchor"></a>Classified landcover data</h4>
+<p>We have classified landcover data when we are making predictions for single polygons (which are aggregated in the composition data case). We can provide <code>veghf</code> and <code>soilhf</code> as a vector of these classes.</p>
+<p>Make sure that the class names are consistent with column names in the example data matrices for the north and south, respectively.</p>
+<p>The function now returns a list of vectors:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## use land cover classes</span>
 <span class="va">z2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preds.html">ai_predict</a></span><span class="op">(</span><span class="va">spp</span>, 
   spclim<span class="op">=</span><span class="va">spclim</span>, 
   veghf<span class="op">=</span><span class="va">spclim</span><span class="op">$</span><span class="va">veghf</span>, 
@@ -178,20 +277,29 @@
 <span class="co">## [INFO] Making predictions for species AlderFlycatcher (birds)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">z2</span><span class="op">)</span>
 <span class="co">## List of 2</span>
-<span class="co">##  $ north: num [1:30, 1:15] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">##   ..- attr(*, "dimnames")=List of 2</span>
-<span class="co">##   .. ..$ : chr [1:30] "1" "2" "3" "4" ...</span>
-<span class="co">##   .. ..$ : chr [1:15] "CCDeciduous2" "CCDeciduousR" "Crop" "GrassHerb" ...</span>
-<span class="co">##  $ south: num [1:30, 1:7] 0 0 0 0 0 ...</span>
-<span class="co">##   ..- attr(*, "dimnames")=List of 2</span>
-<span class="co">##   .. ..$ : chr [1:30] "1" "2" "3" "4" ...</span>
-<span class="co">##   .. ..$ : chr [1:7] "Blowout" "Crop" "RapidDrain" "RoughP" ...</span>
+<span class="co">##  $ north: Named num [1:30] 0.00151 0.00835 0.00186 0.00443 0.0058 ...</span>
+<span class="co">##   ..- attr(*, "names")= chr [1:30] "1" "2" "3" "4" ...</span>
+<span class="co">##  $ south: Named num [1:30] 2.06e-05 6.72e-05 4.12e-05 1.07e-04 1.73e-04 ...</span>
+<span class="co">##   ..- attr(*, "names")= chr [1:30] "1" "2" "3" "4" ...</span>
 
 <span class="co">## averaging predictions</span>
-<span class="va">avg2</span> <span class="op">&lt;-</span> <span class="va">spclim</span><span class="op">$</span><span class="va">wN</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="va">z2</span><span class="op">$</span><span class="va">north</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">spclim</span><span class="op">$</span><span class="va">wN</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="va">z2</span><span class="op">$</span><span class="va">south</span><span class="op">)</span>
+<span class="va">avg2</span> <span class="op">&lt;-</span> <span class="va">spclim</span><span class="op">$</span><span class="va">wN</span> <span class="op">*</span> <span class="va">z2</span><span class="op">$</span><span class="va">north</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">spclim</span><span class="op">$</span><span class="va">wN</span><span class="op">)</span> <span class="op">*</span> <span class="va">z2</span><span class="op">$</span><span class="va">south</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">avg2</span><span class="op">)</span>
 <span class="co">##  Named num [1:30] 2.06e-05 6.72e-05 4.12e-05 1.07e-04 1.73e-04 ...</span>
 <span class="co">##  - attr(*, "names")= chr [1:30] "1" "2" "3" "4" ...</span></code></pre></div>
+</div>
+</div>
+<div id="predict-for-multiple-species" class="section level3">
+<h3 class="hasAnchor">
+<a href="#predict-for-multiple-species" class="anchor"></a>Predict for multiple species</h3>
+<p>Once the predictors are organized, loop over the species IDs from <code>tab</code> and store the results in an organized fashion.</p>
+</div>
+</div>
+<div id="batch-processing" class="section level2">
+<h2 class="hasAnchor">
+<a href="#batch-processing" class="anchor"></a>Batch processing</h2>
+<p>To be added…</p>
+</div>
 </div>
   </div>
 

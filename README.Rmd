@@ -15,15 +15,23 @@ knitr::opts_chunk$set(
 
 # allinone
 
-> All-in-on model based custom predictions
+> All-in-on model based custom predictions for species in Alberta
 
-Install
+## Install
 
 ```{r eval=FALSE}
+if (!require("remotes"))
+    install.packages("remotes")
 remotes::install_github("ABbiodiversity/allinone")
 ```
 
-Load the package, then download and load the coefs, etc.
+You will need data and coefficients from the [ABbiodiversity/allinone-coefs](https://github.com/ABbiodiversity/allinone-coefs) repository. Clone or download the contents in zip format and extract into a folder (`dir` in the example).
+
+```{r}
+dir <- "~/repos/allinone-coefs"
+```
+
+If you don't need the spatial raster files from the ABbiodiversity/allinone-coefs, the `ai_doanload_coefs()` function will grab the coefficients for you and you'll be ready to roll:
 
 ```{r}
 library(allinone)
@@ -31,18 +39,50 @@ library(allinone)
 #ai_dowload_coefs()
 
 ai_load_coefs()
+```
 
+## Command line usage
+
+See all the `r nrow(ai_species())` species that we have coefficients for:
+
+```{r}
 tab <- ai_species()
 str(tab)
+```
 
+### Predictor data
+
+We use an example data set that shows you how to organize the data:
+
+```{r}
 ## example data to see what is needed and how it is formatted
 load(system.file("extdata/example.RData", package="allinone"))
 
+## space climate data frame + veg/soil classes
+str(spclim)
+
+## veg+HF composition data matrix
+colnames(p_veghf)
+
+## soil+HF composition data matrix
+colnames(p_soilhf)
+```
+
+### Predict for a species
+
+You need to define the species ID (use the `tab` object to find out) and the bootstrap ID (`i`). The bootstrap ID can be between 1 and 100 (only 1 for mammals and habitat elements).
+
+```{r}
 ## define species and bootstrap id
 spp <- "AlderFlycatcher"
 i <- 1
-# 1:2880, 1:231
+```
 
+#### Composition data
+
+You can use composition data, i.e. giving the areas or proportions of different landcover types (columns) in a spatial unit (rows). The corresponding relative abundance values will be returned in a matrix format:
+
+```{r}
 ## use composition
 z1 <- ai_predict(spp, 
   spclim=spclim, 
@@ -50,7 +90,13 @@ z1 <- ai_predict(spp,
   soilhf=p_soilhf,
   i=i)
 str(z1)
+```
 
+#### Sector effects
+
+Having such a matrix format is ideal when further aggregation is to e performad on the output, e.g. when calculating sector effects. In the example we use only the current landscape here, and show how to use model weights (`wN`) to average the north and south results in the overlap zone:
+
+```{r}
 ## sector effects
 library(mefa4)
 lt <- ai_classes()
@@ -64,8 +110,18 @@ N <- spclim$wN * Nn + (1-spclim$wN) * Ns
 colSums(Nn)
 colSums(Ns)
 colSums(N)
+```
+
+#### Classified landcover data
+
+We have classified landcover data when we are making predictions for single polygons (which are aggregated in the composition data case). We can provide `veghf` and `soilhf` as a vector of these classes.
+
+Make sure that the class names are consistent with column names in the example data matrices for the north and south, respectively.
+
+The function now returns a list of vectors:
 
 
+```{r}
 ## use land cover classes
 z2 <- ai_predict(spp, 
   spclim=spclim, 
@@ -75,7 +131,14 @@ z2 <- ai_predict(spp,
 str(z2)
 
 ## averaging predictions
-avg2 <- spclim$wN * rowSums(z2$north) + (1-spclim$wN) * rowSums(z2$south)
+avg2 <- spclim$wN * z2$north + (1-spclim$wN) * z2$south
 str(avg2)
 ```
 
+### Predict for multiple species
+
+Once the predictors are organized, loop over the species IDs from `tab` and store the results in an organized fashion.
+
+## Batch processing
+
+To be added...
