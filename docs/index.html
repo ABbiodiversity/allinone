@@ -295,10 +295,119 @@
 <p>Once the predictors are organized, loop over the species IDs from <code>tab</code> and store the results in an organized fashion.</p>
 </div>
 </div>
+<div id="spatial-data-manipulation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#spatial-data-manipulation" class="anchor"></a>Spatial data manipulation</h2>
+<p>The variables in the <code>spclim</code> object can be extracted from the raster layers stored in the <a href="https://github.com/ABbiodiversity/allinone-coefs">ABbiodiversity/allinone-coefs</a> repository. Clone or download the contents in zip format and extract into a folder (<code>dir</code> variable used here).</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span>
+
+<span class="co">## you got some coordinates (degree long/lat)</span>
+<span class="va">XY</span> <span class="op">&lt;-</span> <span class="va">spclim</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"POINT_X"</span>, <span class="st">"POINT_Y"</span><span class="op">)</span><span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html">head</a></span><span class="op">(</span><span class="va">XY</span><span class="op">)</span>
+
+<span class="co">## make a sf data frame</span>
+<span class="va">xy</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">XY</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"POINT_X"</span>, <span class="st">"POINT_Y"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">## set CRS</span>
+<span class="va">xy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html">st_set_crs</a></span><span class="op">(</span><span class="va">xy</span>, <span class="st">"+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"</span><span class="op">)</span>
+
+<span class="co">## variable names</span>
+<span class="va">vn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"AHM"</span>, <span class="st">"FFP"</span>, <span class="st">"MAP"</span>, <span class="st">"MAT"</span>, <span class="st">"MCMT"</span>, <span class="st">"MWMT"</span>, 
+  <span class="st">"NSR1CentralMixedwood"</span>, <span class="st">"NSR1DryMixedwood"</span>, <span class="st">"NSR1Foothills"</span>, 
+  <span class="st">"NSR1Mountain"</span>, <span class="st">"NSR1North"</span>, <span class="st">"NSR1Parkland"</span>, <span class="st">"NSR1Shield"</span>, 
+  <span class="st">"pAspen"</span>, <span class="st">"PeaceRiver"</span>, <span class="st">"PET"</span>, <span class="st">"pWater"</span>, <span class="st">"wN"</span><span class="op">)</span>
+<span class="co">## link to the rasters &amp; create a stack</span>
+<span class="va">rl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="va">vn</span><span class="op">)</span>
+  <span class="va">rl</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html">raster</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"spatial"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">j</span>, <span class="st">".tif"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">rl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span><span class="op">(</span><span class="va">rl</span><span class="op">)</span>
+
+<span class="co">## transform xy to Alberta TM</span>
+<span class="va">xy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">xy</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/projection.html">proj4string</a></span><span class="op">(</span><span class="va">rl</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">rl</span><span class="op">[[</span><span class="st">"pAspen"</span><span class="op">]</span><span class="op">]</span>, axes<span class="op">=</span><span class="cn">FALSE</span>, box<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">xy</span><span class="op">$</span><span class="va">geometry</span>, add<span class="op">=</span><span class="cn">TRUE</span>, pch<span class="op">=</span><span class="fl">3</span><span class="op">)</span>
+
+<span class="co">## extract info</span>
+<span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/extract.html">extract</a></span><span class="op">(</span><span class="va">rl</span>, <span class="va">xy</span><span class="op">)</span>
+
+<span class="co">## absolute difference should be tiny</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/rowSums.html">colSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">spclim</span><span class="op">[</span>,<span class="va">vn</span><span class="op">]</span> <span class="op">-</span> <span class="va">e</span><span class="op">[</span>,<span class="va">vn</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co">## we need long/lat as in XY too</span>
+<span class="va">spclim2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">XY</span>, <span class="va">e</span><span class="op">)</span>
+
+<span class="co">## let's see what we get</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="reference/preds.html">ai_predict</a></span><span class="op">(</span><span class="va">spp</span>, 
+  spclim<span class="op">=</span><span class="va">spclim2</span>, 
+  veghf<span class="op">=</span><span class="va">spclim</span><span class="op">$</span><span class="va">veghf</span>, 
+  soilhf<span class="op">=</span><span class="va">spclim</span><span class="op">$</span><span class="va">soilhf</span>,
+  i<span class="op">=</span><span class="va">i</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
 <div id="batch-processing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#batch-processing" class="anchor"></a>Batch processing</h2>
-<p>To be added…</p>
+<p>For batch processing, look into the <code>inst/docker</code> folder. The plumber API can be deployed using Docker.</p>
+<div id="request" class="section level3">
+<h3 class="hasAnchor">
+<a href="#request" class="anchor"></a>Request</h3>
+<p>The request is a JSON object:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"long"</span><span class="fu">:</span><span class="ot">[</span><span class="fl">-112.6178</span><span class="ot">,</span><span class="fl">-110.9309</span><span class="ot">,</span><span class="fl">-112.8359</span><span class="ot">,</span><span class="fl">-113.3896</span><span class="ot">,</span><span class="fl">-113.8632</span><span class="ot">,</span><span class="fl">-112.299</span><span class="ot">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fl">-110.5805</span><span class="ot">,</span><span class="fl">-111.7806</span><span class="ot">,</span><span class="fl">-112.3541</span><span class="ot">,</span><span class="fl">-113.4144</span><span class="ot">,</span><span class="fl">-110.2329</span><span class="ot">,</span><span class="fl">-114.6634</span><span class="ot">,</span><span class="fl">-111.5857</span><span class="ot">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fl">-114.2688</span><span class="ot">,</span><span class="fl">-114.4383</span><span class="ot">,</span><span class="fl">-110.4444</span><span class="ot">,</span><span class="fl">-113.6355</span><span class="ot">,</span><span class="fl">-113.5874</span><span class="ot">,</span><span class="fl">-113.7964</span><span class="ot">,</span><span class="fl">-113.9445</span><span class="ot">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fl">-119.9851</span><span class="ot">,</span><span class="fl">-112.7504</span><span class="ot">,</span><span class="fl">-113.5144</span><span class="ot">,</span><span class="fl">-112.7433</span><span class="ot">,</span><span class="fl">-118.0259</span><span class="ot">,</span><span class="fl">-116.2997</span><span class="ot">,</span><span class="fl">-114.9535</span><span class="ot">,</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fl">-111.387</span><span class="ot">,</span><span class="fl">-111.8138</span><span class="ot">,</span><span class="fl">-111.1588</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"lat"</span><span class="fu">:</span><span class="ot">[</span><span class="fl">49.5851</span><span class="ot">,</span><span class="fl">51.3653</span><span class="ot">,</span><span class="fl">49.3464</span><span class="ot">,</span><span class="fl">51.344</span><span class="ot">,</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="fl">49.5951</span><span class="ot">,</span><span class="fl">51.3239</span><span class="ot">,</span><span class="fl">50.2184</span><span class="ot">,</span><span class="fl">50.9328</span><span class="ot">,</span><span class="fl">49.5974</span><span class="ot">,</span><span class="fl">49.3468</span><span class="ot">,</span><span class="fl">53.4814</span><span class="ot">,</span><span class="fl">53.8818</span><span class="ot">,</span><span class="fl">53.1679</span><span class="ot">,</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="fl">51.1549</span><span class="ot">,</span><span class="fl">51.3357</span><span class="ot">,</span><span class="fl">52.3465</span><span class="ot">,</span><span class="fl">51.7699</span><span class="ot">,</span><span class="fl">53.748</span><span class="ot">,</span><span class="fl">52.7971</span><span class="ot">,</span><span class="fl">52.1959</span><span class="ot">,</span><span class="fl">59.2693</span><span class="ot">,</span><span class="fl">56.3071</span><span class="ot">,</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="fl">58.269</span><span class="ot">,</span><span class="fl">56.1541</span><span class="ot">,</span><span class="fl">56.3535</span><span class="ot">,</span><span class="fl">59.8075</span><span class="ot">,</span><span class="fl">53.046</span><span class="ot">,</span><span class="fl">58.2175</span><span class="ot">,</span><span class="fl">58.7773</span><span class="ot">,</span><span class="fl">55.0714</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"veghf"</span><span class="fu">:</span><span class="ot">[</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"RoughP"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"TameP"</span><span class="ot">,</span><span class="st">"GrassHerb"</span><span class="ot">,</span><span class="st">"GrassHerb"</span><span class="ot">,</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GrassHerb"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Rural"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"TameP"</span><span class="ot">,</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"TreedFenR"</span><span class="ot">,</span><span class="st">"TreedBog4"</span><span class="ot">,</span><span class="st">"TreedSwamp"</span><span class="ot">,</span><span class="st">"TreedBog5"</span><span class="ot">,</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CCDeciduousR"</span><span class="ot">,</span><span class="st">"TreedFen8"</span><span class="ot">,</span><span class="st">"CCDeciduous2"</span><span class="ot">,</span><span class="st">"PineR"</span><span class="ot">,</span><span class="st">"ShrubbyFen"</span><span class="ot">,</span><span class="st">"Mixedwood2"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"soilhf"</span><span class="fu">:</span><span class="ot">[</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"RoughP"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"TameP"</span><span class="ot">,</span><span class="st">"Blowout"</span><span class="ot">,</span><span class="st">"ThinBreak"</span><span class="ot">,</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RapidDrain"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Rural"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TameP"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"Crop"</span><span class="ot">,</span><span class="st">"RapidDrain"</span><span class="ot">,</span><span class="st">"RapidDrain"</span><span class="ot">,</span><span class="st">"RapidDrain"</span><span class="ot">,</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RapidDrain"</span><span class="ot">,</span><span class="st">"RapidDrain"</span><span class="ot">,</span><span class="st">"RapidDrain"</span><span class="ot">,</span><span class="st">"RoughP"</span><span class="ot">,</span><span class="st">"RapidDrain"</span><span class="ot">,</span><span class="st">"RapidDrain"</span><span class="ot">,</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RapidDrain"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"spp"</span><span class="fu">:</span><span class="ot">[</span><span class="st">"AlderFlycatcher"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"i"</span><span class="fu">:</span><span class="ot">[</span><span class="dv">1</span><span class="ot">]</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+</div>
+<div id="response" class="section level3">
+<h3 class="hasAnchor">
+<a href="#response" class="anchor"></a>Response</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="dv">0</span><span class="ot">,</span><span class="fl">0.0001</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="fl">0.0001</span><span class="ot">,</span><span class="fl">0.0002</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="fl">0.0001</span><span class="ot">,</span><span class="fl">0.0044</span><span class="ot">,</span><span class="fl">0.0105</span><span class="ot">,</span><span class="fl">0.0063</span><span class="ot">,</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fl">0.0045</span><span class="ot">,</span><span class="fl">0.005</span><span class="ot">,</span><span class="fl">0.0055</span><span class="ot">,</span><span class="fl">0.0059</span><span class="ot">,</span><span class="fl">0.0128</span><span class="ot">,</span><span class="fl">0.0116</span><span class="ot">,</span><span class="fl">0.0082</span><span class="ot">,</span><span class="fl">0.1826</span><span class="ot">,</span><span class="fl">0.0326</span><span class="ot">,</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fl">0.072</span><span class="ot">,</span><span class="fl">0.0269</span><span class="ot">,</span><span class="fl">0.3291</span><span class="ot">,</span><span class="fl">0.0538</span><span class="ot">,</span><span class="fl">0.1034</span><span class="ot">,</span><span class="fl">0.0447</span><span class="ot">,</span><span class="fl">0.1266</span><span class="ot">,</span><span class="fl">0.0681</span><span class="ot">]</span></span></code></pre></div>
+</div>
+<div id="docker-workflow" class="section level3">
+<h3 class="hasAnchor">
+<a href="#docker-workflow" class="anchor"></a>Docker workflow</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> inst/docker</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">REGISTRY</span><span class="op">=</span><span class="st">"psolymos"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">TAG</span><span class="op">=</span><span class="st">"allinone:latest"</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">## build the image</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> <span class="va">$REGISTRY</span>/<span class="va">$TAG</span> .</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">## you can also pull this image</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull <span class="va">$REGISTRY</span>/<span class="va">$TAG</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">## run locally</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-p</span> 8080:8080 <span class="va">$REGISTRY</span>/<span class="va">$TAG</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">## curl</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8080/ <span class="at">-d</span> <span class="dt">\</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">'{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">## this is the response</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co"># {"north":[0.0015,0.0681],"south":[0,0.0152]}%</span></span></code></pre></div>
+</div>
 </div>
 </div>
   </div>

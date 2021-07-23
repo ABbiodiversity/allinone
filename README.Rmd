@@ -139,6 +139,120 @@ str(avg2)
 
 Once the predictors are organized, loop over the species IDs from `tab` and store the results in an organized fashion.
 
+## Spatial data manipulation
+
+The variables in the `spclim` object can be extracted from the raster layers stored in the [ABbiodiversity/allinone-coefs](https://github.com/ABbiodiversity/allinone-coefs) repository. Clone or download the contents in zip format and extract into a folder (`dir` variable used here).
+
+```{r eval=FALSE}
+library(sf)
+library(raster)
+
+## you got some coordinates (degree long/lat)
+XY <- spclim[,c("POINT_X", "POINT_Y")]
+head(XY)
+
+## make a sf data frame
+xy <- sf::st_as_sf(XY, coords = c("POINT_X", "POINT_Y"))
+## set CRS
+xy <- st_set_crs(xy, "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+
+## variable names
+vn <- c("AHM", "FFP", "MAP", "MAT", "MCMT", "MWMT", 
+  "NSR1CentralMixedwood", "NSR1DryMixedwood", "NSR1Foothills", 
+  "NSR1Mountain", "NSR1North", "NSR1Parkland", "NSR1Shield", 
+  "pAspen", "PeaceRiver", "PET", "pWater", "wN")
+## link to the rasters & create a stack
+rl <- list()
+for (j in vn)
+  rl[[j]] <- suppressWarnings(raster(
+    file.path(dir, "spatial", paste0(j, ".tif"))))
+rl <- stack(rl)
+
+## transform xy to Alberta TM
+xy <- st_transform(xy, proj4string(rl))
+
+plot(rl[["pAspen"]], axes=FALSE, box=FALSE)
+plot(xy$geometry, add=TRUE, pch=3)
+
+## extract info
+e <- extract(rl, xy)
+
+## absolute difference should be tiny
+max(colSums(abs(spclim[,vn] - e[,vn])))
+
+## we need long/lat as in XY too
+spclim2 <- data.frame(XY, e)
+
+## let's see what we get
+str(ai_predict(spp, 
+  spclim=spclim2, 
+  veghf=spclim$veghf, 
+  soilhf=spclim$soilhf,
+  i=i))
+```
+
 ## Batch processing
 
-To be added...
+For batch processing, look into the `inst/docker` folder. The plumber API can be deployed using Docker.
+
+### Request
+
+The request is a JSON object:
+
+```json
+{
+  "long":[-112.6178,-110.9309,-112.8359,-113.3896,-113.8632,-112.299,
+    -110.5805,-111.7806,-112.3541,-113.4144,-110.2329,-114.6634,-111.5857,
+    -114.2688,-114.4383,-110.4444,-113.6355,-113.5874,-113.7964,-113.9445,
+    -119.9851,-112.7504,-113.5144,-112.7433,-118.0259,-116.2997,-114.9535,
+    -111.387,-111.8138,-111.1588],
+  "lat":[49.5851,51.3653,49.3464,51.344,
+    49.5951,51.3239,50.2184,50.9328,49.5974,49.3468,53.4814,53.8818,53.1679,
+    51.1549,51.3357,52.3465,51.7699,53.748,52.7971,52.1959,59.2693,56.3071,
+    58.269,56.1541,56.3535,59.8075,53.046,58.2175,58.7773,55.0714],
+  "veghf":["Crop","RoughP","Crop","Crop","TameP","GrassHerb","GrassHerb",
+    "GrassHerb","Crop","Crop","Crop","Crop","Crop","Rural","Crop","Crop","TameP",
+    "Crop","Crop","Crop","TreedFenR","TreedBog4","TreedSwamp","TreedBog5",
+    "CCDeciduousR","TreedFen8","CCDeciduous2","PineR","ShrubbyFen","Mixedwood2"],
+  "soilhf":["Crop","RoughP","Crop","Crop","TameP","Blowout","ThinBreak",
+    "RapidDrain","Crop","Crop","Crop","Crop","Crop","Rural","Crop","Crop",
+    "TameP","Crop","Crop","Crop","RapidDrain","RapidDrain","RapidDrain",
+    "RapidDrain","RapidDrain","RapidDrain","RoughP","RapidDrain","RapidDrain",
+    "RapidDrain"],
+  "spp":["AlderFlycatcher"],
+  "i":[1]
+}
+```
+
+### Response
+
+```json
+[0,0.0001,0,0.0001,0.0002,0,0,0,0,0.0001,0.0044,0.0105,0.0063,
+0.0045,0.005,0.0055,0.0059,0.0128,0.0116,0.0082,0.1826,0.0326,
+0.072,0.0269,0.3291,0.0538,0.1034,0.0447,0.1266,0.0681]
+```
+
+### Docker workflow
+
+```bash
+cd inst/docker
+
+export REGISTRY="psolymos"
+export TAG="allinone:latest"
+
+## build the image
+docker build -t $REGISTRY/$TAG .
+
+## you can also pull this image
+docker pull $REGISTRY/$TAG
+
+## run locally
+docker run -p 8080:8080 $REGISTRY/$TAG
+
+## curl
+curl http://localhost:8080/ -d \
+  '{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'
+
+## this is the response
+# {"north":[0.0015,0.0681],"south":[0,0.0152]}%
+```
