@@ -18,7 +18,7 @@ library(allinone)
 
 names(allinone:::.ai1)
 ## character(0)
-ai_load_coefs("~/repos/allinone")
+ai_load_coefs()
 ## [INFO] Loading coefs
 names(allinone:::.ai1)
 ## [1] "COEFS"

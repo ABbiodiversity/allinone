@@ -88,14 +88,17 @@
 
 <span class="co">#ai_dowload_coefs()</span>
 
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu">allinone</span><span class="fu">:::</span><span class="va">.ai1</span><span class="op">)</span>
+<span class="co">## character(0)</span>
 <span class="fu"><a href="reference/coefs.html">ai_load_coefs</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">## [INFO] Loading coefs</span>
-
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu">allinone</span><span class="fu">:::</span><span class="va">.ai1</span><span class="op">)</span>
+<span class="co">## [1] "COEFS"</span>
 <span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/helper.html">ai_species</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">tab</span><span class="op">)</span>
-<span class="co">## 'data.frame':    2594 obs. of  21 variables:</span>
-<span class="co">##  $ SpeciesID     : chr  "Bryoria.fuscescens.glabra.lanestris.vrangiana" ...</span>
-<span class="co">##  $ ScientificName: chr  "Bryoria fuscescens/glabra/lanestris/vrangiana" ...</span>
+<span class="co">## 'data.frame':    1050 obs. of  21 variables:</span>
+<span class="co">##  $ SpeciesID     : chr  "Bryoria.fuscescens.glabra.lanestris.vrangiana" "Candelaria.pacifica" "Cetraria.aculeata.muricata" "Cetraria.arenaria" ...</span>
+<span class="co">##  $ ScientificName: chr  "Bryoria fuscescens/glabra/lanestris/vrangiana" "Candelaria pacifica" "Cetraria aculeata/muricata" "Cetraria arenaria" ...</span>
 <span class="co">##  $ TSNID         : chr  "99002220" "99002875" "98283083" "99002154" ...</span>
 <span class="co">##  $ CommonName    : chr  NA NA NA NA ...</span>
 <span class="co">##  $ ModelNorth    : logi  TRUE FALSE FALSE FALSE FALSE TRUE ...</span>
@@ -122,6 +125,7 @@
 <span class="co">## define species and bootstrap id</span>
 <span class="va">spp</span> <span class="op">&lt;-</span> <span class="st">"AlderFlycatcher"</span>
 <span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">1</span>
+<span class="co"># 1:2880, 1:231</span>
 
 <span class="co">## use composition</span>
 <span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preds.html">ai_predict</a></span><span class="op">(</span><span class="va">spp</span>, 
@@ -132,20 +136,41 @@
 <span class="co">## [INFO] Making predictions for species AlderFlycatcher (birds)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">z1</span><span class="op">)</span>
 <span class="co">## List of 2</span>
-<span class="co">##  $ north: num [1:2880, 1:231] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">##  $ north: num [1:30, 1:96] 0 0 0 0 0 0 0 0 0 0 ...</span>
 <span class="co">##   ..- attr(*, "dimnames")=List of 2</span>
-<span class="co">##   .. ..$ : chr [1:2880] "1" "2" "3" "4" ...</span>
-<span class="co">##   .. ..$ : chr [1:231] "0" "0.000182796893495837" "0.000240745654448181" "0.00031033593035311" ...</span>
+<span class="co">##   .. ..$ : chr [1:30] "1167_502" "964_613" "1194_487" "973_442" ...</span>
+<span class="co">##   .. ..$ : chr [1:96] "Bare" "RoughP" "Crop" "TameP" ...</span>
 <span class="co">##  $ south: num [1:30, 1:19] 0.00 0.00 6.64e-07 0.00 1.41e-05 ...</span>
 <span class="co">##   ..- attr(*, "dimnames")=List of 2</span>
 <span class="co">##   .. ..$ : chr [1:30] "1167_502" "964_613" "1194_487" "973_442" ...</span>
 <span class="co">##   .. ..$ : chr [1:19] "RapidDrain" "Crop" "RoughP" "TameP" ...</span>
 
-<span class="co">## averaging predictions</span>
-<span class="va">Combo</span> <span class="op">&lt;-</span> <span class="va">spclim</span><span class="op">$</span><span class="va">wN</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="va">z1</span><span class="op">$</span><span class="va">north</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">spclim</span><span class="op">$</span><span class="va">wN</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="va">z1</span><span class="op">$</span><span class="va">south</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">Combo</span><span class="op">)</span>
-<span class="co">##  Named num [1:2880] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">##  - attr(*, "names")= chr [1:2880] "1" "2" "3" "4" ...</span>
+<span class="co">## sector effects</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/psolymos/mefa4">mefa4</a></span><span class="op">)</span>
+<span class="va">lt</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/helper.html">ai_classes</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">ltn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mefa4/man/nonDuplicated.html">nonDuplicated</a></span><span class="op">(</span><span class="va">lt</span><span class="op">$</span><span class="va">north</span>, <span class="va">Label</span>, <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">lts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mefa4/man/nonDuplicated.html">nonDuplicated</a></span><span class="op">(</span><span class="va">lt</span><span class="op">$</span><span class="va">south</span>, <span class="va">Label</span>, <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="va">Nn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mefa4/man/groupSums.html">groupSums</a></span><span class="op">(</span><span class="va">z1</span><span class="op">$</span><span class="va">north</span>, <span class="fl">2</span>, <span class="va">ltn</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">z1</span><span class="op">$</span><span class="va">north</span><span class="op">)</span>, <span class="st">"Sector"</span><span class="op">]</span><span class="op">)</span>
+<span class="va">Ns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mefa4/man/groupSums.html">groupSums</a></span><span class="op">(</span><span class="va">z1</span><span class="op">$</span><span class="va">south</span>, <span class="fl">2</span>, <span class="va">lts</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">z1</span><span class="op">$</span><span class="va">south</span><span class="op">)</span>, <span class="st">"Sector"</span><span class="op">]</span><span class="op">)</span>
+<span class="va">Ns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">Ns</span>, Forestry<span class="op">=</span><span class="fl">0</span><span class="op">)</span>
+<span class="va">N</span> <span class="op">&lt;-</span> <span class="va">spclim</span><span class="op">$</span><span class="va">wN</span> <span class="op">*</span> <span class="va">Nn</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">spclim</span><span class="op">$</span><span class="va">wN</span><span class="op">)</span> <span class="op">*</span> <span class="va">Ns</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colSums.html">colSums</a></span><span class="op">(</span><span class="va">Nn</span><span class="op">)</span>
+<span class="co">##         Native    Agriculture     RuralUrban         Energy Transportation </span>
+<span class="co">##     0.64406824     0.14011059     0.01153628     0.03155056     0.02626116 </span>
+<span class="co">##       Forestry </span>
+<span class="co">##     0.17863231</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colSums.html">colSums</a></span><span class="op">(</span><span class="va">Ns</span><span class="op">)</span>
+<span class="co">##         Native    Agriculture     RuralUrban         Energy Transportation </span>
+<span class="co">##   2.973927e-03   1.180921e-02   2.369699e-04   2.922007e-10   3.790724e-10 </span>
+<span class="co">##       Forestry </span>
+<span class="co">##   0.000000e+00</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colSums.html">colSums</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span>
+<span class="co">##         Native    Agriculture     RuralUrban         Energy Transportation </span>
+<span class="co">##    0.610374698    0.076370845    0.005830417    0.022772096    0.015636447 </span>
+<span class="co">##       Forestry </span>
+<span class="co">##    0.178632312</span>
+
 
 <span class="co">## use land cover classes</span>
 <span class="va">z2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preds.html">ai_predict</a></span><span class="op">(</span><span class="va">spp</span>, 
@@ -163,7 +188,13 @@
 <span class="co">##  $ south: num [1:30, 1:7] 0 0 0 0 0 ...</span>
 <span class="co">##   ..- attr(*, "dimnames")=List of 2</span>
 <span class="co">##   .. ..$ : chr [1:30] "1" "2" "3" "4" ...</span>
-<span class="co">##   .. ..$ : chr [1:7] "Blowout" "Crop" "RapidDrain" "RoughP" ...</span></code></pre></div>
+<span class="co">##   .. ..$ : chr [1:7] "Blowout" "Crop" "RapidDrain" "RoughP" ...</span>
+
+<span class="co">## averaging predictions</span>
+<span class="va">avg2</span> <span class="op">&lt;-</span> <span class="va">spclim</span><span class="op">$</span><span class="va">wN</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="va">z2</span><span class="op">$</span><span class="va">north</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">spclim</span><span class="op">$</span><span class="va">wN</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="va">z2</span><span class="op">$</span><span class="va">south</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">avg2</span><span class="op">)</span>
+<span class="co">##  Named num [1:30] 2.06e-05 6.72e-05 4.12e-05 1.07e-04 1.73e-04 ...</span>
+<span class="co">##  - attr(*, "names")= chr [1:30] "1" "2" "3" "4" ...</span></code></pre></div>
 </div>
   </div>
 
