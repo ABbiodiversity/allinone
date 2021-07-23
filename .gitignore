@@ -44,6 +44,7 @@ Temporary Items
 
 ## R related files
 *.Rdata
+!inst/extdata/*.RData
 *.Rhistory
 .Rproj.user*
 .Rproj.user
