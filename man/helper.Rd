@@ -3,12 +3,15 @@
 \name{helper}
 \alias{helper}
 \alias{ai_species}
+\alias{ai_classes}
 \title{Helpers
-Helper functionsDownload, load, unload coefficients.}
+Helper functions to list species and vegetation/soil/footprint classes.}
 \usage{
 ai_species()
+
+ai_classes()
 }
 \description{
 Helpers
-Helper functionsDownload, load, unload coefficients.
+Helper functions to list species and vegetation/soil/footprint classes.
 }

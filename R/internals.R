@@ -97,7 +97,7 @@
         }
     }
     rownames(z) <- rownames(x)
-    z
+    as.matrix(z)
 }
 
 .get_taxon <- function(spp) {

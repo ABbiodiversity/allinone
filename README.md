@@ -16,14 +16,17 @@ library(allinone)
 
 #ai_dowload_coefs()
 
-ai_load_coefs()
+names(allinone:::.ai1)
+## character(0)
+ai_load_coefs("~/repos/allinone")
 ## [INFO] Loading coefs
-
+names(allinone:::.ai1)
+## [1] "COEFS"
 tab <- ai_species()
 str(tab)
-## 'data.frame':    2594 obs. of  21 variables:
-##  $ SpeciesID     : chr  "Bryoria.fuscescens.glabra.lanestris.vrangiana" ...
-##  $ ScientificName: chr  "Bryoria fuscescens/glabra/lanestris/vrangiana" ...
+## 'data.frame':    1050 obs. of  21 variables:
+##  $ SpeciesID     : chr  "Bryoria.fuscescens.glabra.lanestris.vrangiana" "Candelaria.pacifica" "Cetraria.aculeata.muricata" "Cetraria.arenaria" ...
+##  $ ScientificName: chr  "Bryoria fuscescens/glabra/lanestris/vrangiana" "Candelaria pacifica" "Cetraria aculeata/muricata" "Cetraria arenaria" ...
 ##  $ TSNID         : chr  "99002220" "99002875" "98283083" "99002154" ...
 ##  $ CommonName    : chr  NA NA NA NA ...
 ##  $ ModelNorth    : logi  TRUE FALSE FALSE FALSE FALSE TRUE ...
@@ -50,6 +53,7 @@ load(system.file("extdata/example.RData", package="allinone"))
 ## define species and bootstrap id
 spp <- "AlderFlycatcher"
 i <- 1
+# 1:2880, 1:231
 
 ## use composition
 z1 <- ai_predict(spp, 
@@ -60,20 +64,41 @@ z1 <- ai_predict(spp,
 ## [INFO] Making predictions for species AlderFlycatcher (birds)
 str(z1)
 ## List of 2
-##  $ north: num [1:2880, 1:231] NA NA NA NA NA NA NA NA NA NA ...
+##  $ north: num [1:30, 1:96] 0 0 0 0 0 0 0 0 0 0 ...
 ##   ..- attr(*, "dimnames")=List of 2
-##   .. ..$ : chr [1:2880] "1" "2" "3" "4" ...
-##   .. ..$ : chr [1:231] "0" "0.000182796893495837" "0.000240745654448181" "0.00031033593035311" ...
+##   .. ..$ : chr [1:30] "1167_502" "964_613" "1194_487" "973_442" ...
+##   .. ..$ : chr [1:96] "Bare" "RoughP" "Crop" "TameP" ...
 ##  $ south: num [1:30, 1:19] 0.00 0.00 6.64e-07 0.00 1.41e-05 ...
 ##   ..- attr(*, "dimnames")=List of 2
 ##   .. ..$ : chr [1:30] "1167_502" "964_613" "1194_487" "973_442" ...
 ##   .. ..$ : chr [1:19] "RapidDrain" "Crop" "RoughP" "TameP" ...
 
-## averaging predictions
-Combo <- spclim$wN * rowSums(z1$north) + (1-spclim$wN) * rowSums(z1$south)
-str(Combo)
-##  Named num [1:2880] NA NA NA NA NA NA NA NA NA NA ...
-##  - attr(*, "names")= chr [1:2880] "1" "2" "3" "4" ...
+## sector effects
+library(mefa4)
+lt <- ai_classes()
+ltn <- nonDuplicated(lt$north, Label, TRUE)
+lts <- nonDuplicated(lt$south, Label, TRUE)
+
+Nn <- groupSums(z1$north, 2, ltn[colnames(z1$north), "Sector"])
+Ns <- groupSums(z1$south, 2, lts[colnames(z1$south), "Sector"])
+Ns <- cbind(Ns, Forestry=0)
+N <- spclim$wN * Nn + (1-spclim$wN) * Ns
+colSums(Nn)
+##         Native    Agriculture     RuralUrban         Energy Transportation 
+##     0.64406824     0.14011059     0.01153628     0.03155056     0.02626116 
+##       Forestry 
+##     0.17863231
+colSums(Ns)
+##         Native    Agriculture     RuralUrban         Energy Transportation 
+##   2.973927e-03   1.180921e-02   2.369699e-04   2.922007e-10   3.790724e-10 
+##       Forestry 
+##   0.000000e+00
+colSums(N)
+##         Native    Agriculture     RuralUrban         Energy Transportation 
+##    0.610374698    0.076370845    0.005830417    0.022772096    0.015636447 
+##       Forestry 
+##    0.178632312
+
 
 ## use land cover classes
 z2 <- ai_predict(spp, 
@@ -92,4 +117,10 @@ str(z2)
 ##   ..- attr(*, "dimnames")=List of 2
 ##   .. ..$ : chr [1:30] "1" "2" "3" "4" ...
 ##   .. ..$ : chr [1:7] "Blowout" "Crop" "RapidDrain" "RoughP" ...
+
+## averaging predictions
+avg2 <- spclim$wN * rowSums(z2$north) + (1-spclim$wN) * rowSums(z2$south)
+str(avg2)
+##  Named num [1:30] 2.06e-05 6.72e-05 4.12e-05 1.07e-04 1.73e-04 ...
+##  - attr(*, "names")= chr [1:30] "1" "2" "3" "4" ...
 ```

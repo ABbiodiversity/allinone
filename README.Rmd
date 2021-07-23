@@ -30,8 +30,9 @@ library(allinone)
 
 #ai_dowload_coefs()
 
-ai_load_coefs()
-
+names(allinone:::.ai1)
+ai_load_coefs("~/repos/allinone")
+names(allinone:::.ai1)
 tab <- ai_species()
 str(tab)
 
@@ -41,6 +42,7 @@ load(system.file("extdata/example.RData", package="allinone"))
 ## define species and bootstrap id
 spp <- "AlderFlycatcher"
 i <- 1
+# 1:2880, 1:231
 
 ## use composition
 z1 <- ai_predict(spp, 
@@ -50,9 +52,20 @@ z1 <- ai_predict(spp,
   i=i)
 str(z1)
 
-## averaging predictions
-Combo <- spclim$wN * rowSums(z1$north) + (1-spclim$wN) * rowSums(z1$south)
-str(Combo)
+## sector effects
+library(mefa4)
+lt <- ai_classes()
+ltn <- nonDuplicated(lt$north, Label, TRUE)
+lts <- nonDuplicated(lt$south, Label, TRUE)
+
+Nn <- groupSums(z1$north, 2, ltn[colnames(z1$north), "Sector"])
+Ns <- groupSums(z1$south, 2, lts[colnames(z1$south), "Sector"])
+Ns <- cbind(Ns, Forestry=0)
+N <- spclim$wN * Nn + (1-spclim$wN) * Ns
+colSums(Nn)
+colSums(Ns)
+colSums(N)
+
 
 ## use land cover classes
 z2 <- ai_predict(spp, 
@@ -61,5 +74,9 @@ z2 <- ai_predict(spp,
   soilhf=spclim$soilhf,
   i=i)
 str(z2)
+
+## averaging predictions
+avg2 <- spclim$wN * rowSums(z2$north) + (1-spclim$wN) * rowSums(z2$south)
+str(avg2)
 ```
 

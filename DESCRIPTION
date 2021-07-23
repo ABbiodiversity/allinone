@@ -17,8 +17,8 @@ BugReports: https://github.com/ABbiodiversity/allinone/issues
 License: MIT + file LICENSE
 LazyLoad: yes
 LazyData: true
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.5.0), Matrix
 Imports: methods
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, mefa4
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
