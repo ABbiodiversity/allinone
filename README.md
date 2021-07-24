@@ -63,6 +63,21 @@ str(tab)
 ##  $ Group         : chr  "lichens" "lichens" "lichens" "lichens" ...
 ```
 
+Here is the number of species by groups:
+
+``` r
+data.frame(table(tab$Group))
+##       Var1 Freq
+## 1    birds  127
+## 2 habitats   45
+## 3  lichens  164
+## 4  mammals   19
+## 5    mites  118
+## 6   mosses  120
+## 7 nnplants    1
+## 8  vplants  456
+```
+
 ### Predictor data
 
 We use an example data set that shows you how to organize the data:
@@ -162,7 +177,7 @@ z1 <- ai_predict(spp,
   veghf=p_veghf, 
   soilhf=p_soilhf,
   i=i)
-## [INFO] Making predictions for species AlderFlycatcher (birds)
+## [INFO] Making predictions for species AlderFlycatcher (birds) i=1
 str(z1)
 ## List of 2
 ##  $ north: num [1:30, 1:96] 0 0 0 0 0 0 0 0 0 0 ...
@@ -229,7 +244,7 @@ z2 <- ai_predict(spp,
   veghf=spclim$veghf, 
   soilhf=spclim$soilhf,
   i=i)
-## [INFO] Making predictions for species AlderFlycatcher (birds)
+## [INFO] Making predictions for species AlderFlycatcher (birds) i=1
 str(z2)
 ## List of 2
 ##  $ north: Named num [1:30] 0.00151 0.00835 0.00186 0.00443 0.0058 ...
@@ -243,6 +258,36 @@ str(avg2)
 ##  Named num [1:30] 2.06e-05 6.72e-05 4.12e-05 1.07e-04 1.73e-04 ...
 ##  - attr(*, "names")= chr [1:30] "1" "2" "3" "4" ...
 ```
+
+### Prediction uncertainty
+
+We can use the bootstrap distribution to calculate uncertainty
+(i.e. confidence intervals, CI):
+
+``` r
+v <- NULL
+
+for (i in 1:20) {
+    zz <- ai_predict(spp, 
+        spclim=spclim, 
+        veghf=spclim$veghf, 
+        soilhf=spclim$soilhf,
+        i=i)
+    v <- cbind(v, spclim$wN * zz$north + (1-spclim$wN) * zz$south)
+}
+
+t(apply(v[25:30,], 1, quantile, c(0.5, 0.05, 0.95)))
+          50%         5%        95%
+## 25 0.31590764 0.26543390 0.35751442
+## 26 0.05219450 0.03893699 0.07041478
+## 27 0.09576693 0.07895616 0.11126043
+## 28 0.04139684 0.03238818 0.05872012
+## 29 0.12563301 0.09836205 0.15970154
+## 30 0.06754963 0.05384576 0.08798115
+```
+
+This gives the median and the 90% CI. This is currently not available
+for mammals and habitat elements.
 
 ### Predict for multiple species
 
@@ -390,14 +435,17 @@ the background (-d):
 docker run -d --name aiapi -p 8080:8080 $REGISTRY/$TAG
 ```
 
-Now use curl to make a request and test the API:
+Now use curl to make a request and test the API, it can take a single
+value, or a vector of values for long, lat, veghf, and soilhf:
 
 ``` bash
 ## curl
 curl http://localhost:8080/ -d \
-  '{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'
+  '{"long":[-111.1588],"lat":[55.0714],"veghf":["Mixedwood2"],"soilhf":["RapidDrain"],"spp":["AlderFlycatcher"],"i":[2]}'
+# [0.0605]
 
-## this is the response
+curl http://localhost:8080/ -d \
+  '{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'
 # [0,0.0681]
 ```
 
