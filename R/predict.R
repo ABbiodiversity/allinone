@@ -28,9 +28,16 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
     VECTOR <- FALSE
     if (!is.null(veghf)) {
         if (is.null(dim(veghf))) {
-            p_veghf <- methods::as(stats::model.matrix(~x-1,
-                data.frame(x=as.character(veghf))), "dgCMatrix")
-            colnames(p_veghf) <- substr(colnames(p_veghf), 2, nchar(colnames(p_veghf)))
+            if (length(unique(veghf)) > 1) {
+                p_veghf <- methods::as(stats::model.matrix(~x-1,
+                    data.frame(x=as.character(veghf))), "dgCMatrix")
+                colnames(p_veghf) <- substr(colnames(p_veghf), 2,
+                                            nchar(colnames(p_veghf)))
+            } else {
+                p_veghf <- methods::as(
+                    matrix(1, length(veghf), 1L), "dgCMatrix")
+                colnames(p_veghf) <- unique(veghf)
+            }
             VECTOR <- TRUE
         } else {
             p_veghf <- veghf
@@ -40,9 +47,16 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
     }
     if (!is.null(soilhf)) {
         if (is.null(dim(soilhf))) {
-            p_soilhf <- methods::as(stats::model.matrix(~x-1,
-                data.frame(x=as.character(soilhf))), "dgCMatrix")
-            colnames(p_soilhf) <- substr(colnames(p_soilhf), 2, nchar(colnames(p_soilhf)))
+            if (length(unique(soilhf)) > 1) {
+                p_soilhf <- methods::as(stats::model.matrix(~x-1,
+                    data.frame(x=as.character(soilhf))), "dgCMatrix")
+                colnames(p_soilhf) <- substr(colnames(p_soilhf), 2,
+                                             nchar(colnames(p_soilhf)))
+            } else {
+                p_soilhf <- methods::as(
+                    matrix(1, length(soilhf), 1L), "dgCMatrix")
+                colnames(p_soilhf) <- unique(soilhf)
+            }
             VECTOR <- TRUE
         } else {
             p_soilhf <- soilhf
