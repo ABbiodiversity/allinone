@@ -45,7 +45,7 @@ ai_load_coefs <- function(dir=NULL) {
     out <- try(load(fn, envir=.ai1))
     if (inherits(out, "try-error"))
         stop("Use ai_download_coefs() to download coefs")
-    out
+    invisible(out)
 }
 
 #' @export
