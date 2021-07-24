@@ -276,7 +276,7 @@ curl http://localhost:8080/ -d \
   '{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'
 
 ## this is the response
-# {"north":[0.0015,0.0681],"south":[0,0.0152]}
+# [0,0.0681]
 ```
 
 See the logs:
@@ -287,8 +287,8 @@ docker logs aiapi
 # [INFO] Packages loaded
 # [INFO] Raster stack loaded
 # [INFO] Loading coefs
-# [INFO] 2021-07-24 06:13:10 Starting server: http://0.0.0.0:8080
-# [INFO] Making predictions for species AlderFlycatcher (birds)
+# [INFO] 2021-07-24 06:36:14 Starting server: http://0.0.0.0:8080
+# [INFO] Making predictions for species AlderFlycatcher (birds) i=1
 ```
 
 Kill and remove the container:
@@ -297,8 +297,8 @@ Kill and remove the container:
 docker kill aiapi && docker rm aiapi
 ```
 
-It is advised to add the Docker background process to systemd or use a Docker Compose in production. Docker Compose can
+It is advised to add the Docker background process to systemd or use Docker Compose in production. Docker Compose can better handle container restarts and can run multiple replicas (simple round robin load balancing, which requires a proxy server, like Nginx or Caddy).
 
-- better handle container restarts
-- don't have to expose the container port beyond the bridge network
-- can run multiple replicas
+See the `inst/docker/docker-compose.yml` file for details. Deploy with `docker-compose up -d` which will publish the app on port 8080.
+
+When the containers are already running, and the configuration or images have changed after the container's creation, `docker-compose up` picks up the changes. Tear down with `docker-compose down`.

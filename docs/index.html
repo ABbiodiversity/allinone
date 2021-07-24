@@ -416,23 +416,20 @@
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">## this is the response</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># {"north":[0.0015,0.0681],"south":[0,0.0152]}</span></span></code></pre></div>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># [0,0.0681]</span></span></code></pre></div>
 <p>See the logs:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> logs aiapi</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] This is the All-in-one API</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Packages loaded</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Raster stack loaded</span></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Loading coefs</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] 2021-07-24 06:13:10 Starting server: http://0.0.0.0:8080</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Making predictions for species AlderFlycatcher (birds)</span></span></code></pre></div>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] 2021-07-24 06:36:14 Starting server: http://0.0.0.0:8080</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Making predictions for species AlderFlycatcher (birds) i=1</span></span></code></pre></div>
 <p>Kill and remove the container:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> kill aiapi <span class="kw">&amp;&amp;</span> <span class="ex">docker</span> rm aiapi</span></code></pre></div>
-<p>It is advised to add the Docker background process to systemd or use a Docker Compose in production. Docker Compose can</p>
-<ul>
-<li>better handle container restarts</li>
-<li>don’t have to expose the container port beyond the bridge network</li>
-<li>can run multiple replicas</li>
-</ul>
+<p>It is advised to add the Docker background process to systemd or use Docker Compose in production. Docker Compose can better handle container restarts and can run multiple replicas (simple round robin load balancing, which requires a proxy server, like Nginx or Caddy).</p>
+<p>See the <code>inst/docker/docker-compose.yml</code> file for details. Deploy with <code>docker-compose up -d</code> which will publish the app on port 8080.</p>
+<p>When the containers are already running, and the configuration or images have changed after the container’s creation, <code>docker-compose up</code> picks up the changes. Tear down with <code>docker-compose down</code>.</p>
 </div>
 </div>
 </div>
