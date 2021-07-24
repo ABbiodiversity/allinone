@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>All-in-on Model Based Custom Predictions • allinone</title>
+<title>All-in-on Model Based Custom Predictions for Alberta • allinone</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="All-in-on Model Based Custom Predictions">
+<script src="pkgdown.js"></script><meta property="og:title" content="All-in-on Model Based Custom Predictions for Alberta">
 <meta property="og:description" content="Decision support tool
   that provides an interface to enable
   custom predictions based on estimates created by the Alberta
@@ -349,11 +349,11 @@
 <div id="batch-processing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#batch-processing" class="anchor"></a>Batch processing</h2>
-<p>For batch processing, look into the <code>inst/docker</code> folder. The plumber API can be deployed using Docker.</p>
+<p>For batch processing, look into the <code>inst/docker</code> folder. The API can be deployed using Docker or Docker Compose.</p>
 <div id="request" class="section level3">
 <h3 class="hasAnchor">
 <a href="#request" class="anchor"></a>Request</h3>
-<p>The request is a JSON object:</p>
+<p>Pass is a JSON object (Content type: application/json) as the request body with longitude, latitude, veg/soil/HF classes, the species ID and the bootstrap ID (all these arrays in side an object).</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"long"</span><span class="fu">:</span><span class="ot">[</span><span class="fl">-112.6178</span><span class="ot">,</span><span class="fl">-110.9309</span><span class="ot">,</span><span class="fl">-112.8359</span><span class="ot">,</span><span class="fl">-113.3896</span><span class="ot">,</span><span class="fl">-113.8632</span><span class="ot">,</span><span class="fl">-112.299</span><span class="ot">,</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fl">-110.5805</span><span class="ot">,</span><span class="fl">-111.7806</span><span class="ot">,</span><span class="fl">-112.3541</span><span class="ot">,</span><span class="fl">-113.4144</span><span class="ot">,</span><span class="fl">-110.2329</span><span class="ot">,</span><span class="fl">-114.6634</span><span class="ot">,</span><span class="fl">-111.5857</span><span class="ot">,</span></span>
@@ -380,6 +380,7 @@
 <div id="response" class="section level3">
 <h3 class="hasAnchor">
 <a href="#response" class="anchor"></a>Response</h3>
+<p>The response is a JSON (application/json) array with the model averaged relative abundance values:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="dv">0</span><span class="ot">,</span><span class="fl">0.0001</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="fl">0.0001</span><span class="ot">,</span><span class="fl">0.0002</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="dv">0</span><span class="ot">,</span><span class="fl">0.0001</span><span class="ot">,</span><span class="fl">0.0044</span><span class="ot">,</span><span class="fl">0.0105</span><span class="ot">,</span><span class="fl">0.0063</span><span class="ot">,</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fl">0.0045</span><span class="ot">,</span><span class="fl">0.005</span><span class="ot">,</span><span class="fl">0.0055</span><span class="ot">,</span><span class="fl">0.0059</span><span class="ot">,</span><span class="fl">0.0128</span><span class="ot">,</span><span class="fl">0.0116</span><span class="ot">,</span><span class="fl">0.0082</span><span class="ot">,</span><span class="fl">0.1826</span><span class="ot">,</span><span class="fl">0.0326</span><span class="ot">,</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fl">0.072</span><span class="ot">,</span><span class="fl">0.0269</span><span class="ot">,</span><span class="fl">0.3291</span><span class="ot">,</span><span class="fl">0.0538</span><span class="ot">,</span><span class="fl">0.1034</span><span class="ot">,</span><span class="fl">0.0447</span><span class="ot">,</span><span class="fl">0.1266</span><span class="ot">,</span><span class="fl">0.0681</span><span class="ot">]</span></span></code></pre></div>
@@ -387,6 +388,11 @@
 <div id="docker-workflow" class="section level3">
 <h3 class="hasAnchor">
 <a href="#docker-workflow" class="anchor"></a>Docker workflow</h3>
+<p>A Docker workflow is ideal because the size of the application with all the required spatial layers and coefficients is relatively small.</p>
+<div id="building-the-image" class="section level4">
+<h4 class="hasAnchor">
+<a href="#building-the-image" class="anchor"></a>Building the image</h4>
+<p>Change directory to where the Dockerfile is, build and push the image:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> inst/docker</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">REGISTRY</span><span class="op">=</span><span class="st">"psolymos"</span></span>
@@ -395,18 +401,39 @@
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">## build the image</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> <span class="va">$REGISTRY</span>/<span class="va">$TAG</span> .</span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">## you can also pull this image</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull <span class="va">$REGISTRY</span>/<span class="va">$TAG</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">## run locally</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-p</span> 8080:8080 <span class="va">$REGISTRY</span>/<span class="va">$TAG</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">## curl</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8080/ <span class="at">-d</span> <span class="dt">\</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">'{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">## this is the response</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co"># {"north":[0.0015,0.0681],"south":[0,0.0152]}%</span></span></code></pre></div>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> push <span class="va">$REGISTRY</span>/<span class="va">$TAG</span></span></code></pre></div>
+</div>
+<div id="deploying" class="section level4">
+<h4 class="hasAnchor">
+<a href="#deploying" class="anchor"></a>Deploying</h4>
+<p>The Docker image can be deployed enywhere. The machine needs to have the Docker Engine installed. Pull the Docker image to the machine you want to run the API on:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull <span class="va">$REGISTRY</span>/<span class="va">$TAG</span></span></code></pre></div>
+<p>In production, run the image with port mapping (-p host:container) in the background (-d):</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-d</span> <span class="at">--name</span> aiapi <span class="at">-p</span> 8080:8080 <span class="va">$REGISTRY</span>/<span class="va">$TAG</span></span></code></pre></div>
+<p>Now use curl to make a request and test the API:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">## curl</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8080/ <span class="at">-d</span> <span class="dt">\</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">## this is the response</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># {"north":[0.0015,0.0681],"south":[0,0.0152]}</span></span></code></pre></div>
+<p>See the logs:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> logs aiapi</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] This is the All-in-one API</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Packages loaded</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Raster stack loaded</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Loading coefs</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] 2021-07-24 06:13:10 Starting server: http://0.0.0.0:8080</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># [INFO] Making predictions for species AlderFlycatcher (birds)</span></span></code></pre></div>
+<p>Kill and remove the container:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> kill aiapi <span class="kw">&amp;&amp;</span> <span class="ex">docker</span> rm aiapi</span></code></pre></div>
+<p>It is advised to add the Docker background process to systemd or use a Docker Compose in production. Docker Compose can</p>
+<ul>
+<li>better handle container restarts</li>
+<li>don’t have to expose the container port beyond the bridge network</li>
+<li>can run multiple replicas</li>
+</ul>
+</div>
 </div>
 </div>
 </div>

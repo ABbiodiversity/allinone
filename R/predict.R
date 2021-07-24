@@ -9,10 +9,6 @@
 #'   (2) composition matrix with land cover classes as columns.
 #' @param i Bootstrap ID (1-100).
 #'
-#' @return
-#'
-#' Stuff.
-#'
 #' @name preds
 NULL
 
@@ -21,6 +17,9 @@ NULL
 #' @import Matrix
 ## ai_predict_class and ai_predict_comp
 ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
+
+    if (!.loaded())
+        stop("Use ai_load_coefs() to load coefs")
 
     ## We need Matrix pkg loaded and not just import
     ## for all the math methods to work
@@ -57,7 +56,7 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
 
     if (taxon %in% c("mammals", "habitats") && i > 1)
         .msg(sprintf("Bootstrap .ai1$COEFS not available for species %s (%s)", spp, taxon), 4)
-    .msg(sprintf("Making predictions for species %s (%s)", spp, taxon))
+    .msg(sprintf("Making predictions for species %s (%s) i=%s", spp, taxon, i))
     if (i > 100)
         .msg("Bootstrap ID cannot be > 100", 4)
     if (i < 1)

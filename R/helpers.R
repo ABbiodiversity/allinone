@@ -7,6 +7,8 @@ NULL
 #' @export
 #' @rdname helper
 ai_species <- function() {
+    if (!.loaded())
+        stop("Use ai_load_coefs() to load coefs")
     out <- NULL
     for (taxon in names(.ai1$COEFS)) {
         tmp <- .ai1$COEFS[[taxon]]$species

@@ -193,11 +193,11 @@ str(ai_predict(spp,
 
 ## Batch processing
 
-For batch processing, look into the `inst/docker` folder. The plumber API can be deployed using Docker.
+For batch processing, look into the `inst/docker` folder. The API can be deployed using Docker or Docker Compose.
 
 ### Request
 
-The request is a JSON object:
+Pass is a JSON object (Content type: application/json) as the request body with longitude, latitude, veg/soil/HF classes, the species ID and the bootstrap ID (all these arrays in side an object).
 
 ```json
 {
@@ -226,6 +226,8 @@ The request is a JSON object:
 
 ### Response
 
+The response is a JSON (application/json) array with the model averaged relative abundance values:
+
 ```json
 [0,0.0001,0,0.0001,0.0002,0,0,0,0,0.0001,0.0044,0.0105,0.0063,
 0.0045,0.005,0.0055,0.0059,0.0128,0.0116,0.0082,0.1826,0.0326,
@@ -233,6 +235,12 @@ The request is a JSON object:
 ```
 
 ### Docker workflow
+
+A Docker workflow is ideal because the size of the application with all the required spatial layers and coefficients is relatively small.
+
+#### Building the image
+
+Change directory to where the Dockerfile is, build and push the image:
 
 ```bash
 cd inst/docker
@@ -243,16 +251,54 @@ export TAG="allinone:latest"
 ## build the image
 docker build -t $REGISTRY/$TAG .
 
-## you can also pull this image
+docker push $REGISTRY/$TAG
+```
+
+#### Deploying
+
+The Docker image can be deployed enywhere. The machine needs to have the Docker Engine installed. Pull the Docker image to the machine you want to run the API on:
+
+```bash
 docker pull $REGISTRY/$TAG
+```
 
-## run locally
-docker run -p 8080:8080 $REGISTRY/$TAG
+In production, run the image with port mapping (-p host:container) in the background (-d):
 
+```bash
+docker run -d --name aiapi -p 8080:8080 $REGISTRY/$TAG
+```
+
+Now use curl to make a request and test the API:
+
+```bash
 ## curl
 curl http://localhost:8080/ -d \
   '{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'
 
 ## this is the response
-# {"north":[0.0015,0.0681],"south":[0,0.0152]}%
+# {"north":[0.0015,0.0681],"south":[0,0.0152]}
 ```
+
+See the logs:
+
+```bash
+docker logs aiapi
+# [INFO] This is the All-in-one API
+# [INFO] Packages loaded
+# [INFO] Raster stack loaded
+# [INFO] Loading coefs
+# [INFO] 2021-07-24 06:13:10 Starting server: http://0.0.0.0:8080
+# [INFO] Making predictions for species AlderFlycatcher (birds)
+```
+
+Kill and remove the container:
+
+```bash
+docker kill aiapi && docker rm aiapi
+```
+
+It is advised to add the Docker background process to systemd or use a Docker Compose in production. Docker Compose can
+
+- better handle container restarts
+- don't have to expose the container port beyond the bridge network
+- can run multiple replicas

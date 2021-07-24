@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+cat("[INFO] This is the All-in-one API\n")
+
 suppressPackageStartupMessages({
     library(httpuv)
     library(jsonlite)
@@ -8,11 +10,6 @@ suppressPackageStartupMessages({
     library(raster)
 })
 cat("[INFO] Packages loaded\n")
-
-#options("allinone" = list(
-#    url="https://abbiodiversity.github.io/allinone-coefs/v2020",
-#    dir=file.path(dir, "v2020"),
-#    verbose=0))
 
 PORT <- 8080
 dir <- if (interactive())
@@ -23,11 +20,12 @@ vn <- c("AHM", "FFP", "MAP", "MAT", "MCMT", "MWMT",
     "NSR1Mountain", "NSR1North", "NSR1Parkland", "NSR1Shield",
     "pAspen", "PeaceRiver", "PET", "pWater", "wN")
 rl <- list()
-for (j in vn)
+for (j in vn) {
     rl[[j]] <- suppressWarnings(raster(
         file.path(dir, "spatial", paste0(j, ".tif"))))
+}
 rl <- stack(rl)
-cat("[INFO] Raster stack loaded:", names(rl), "\n")
+cat("[INFO] Raster stack loaded\n")
 
 crsll <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 crstm <- "+proj=tmerc +lat_0=0 +lon_0=-115 +k=0.9992 +x_0=500000 +y_0=0 +ellps=GRS80 +units=m +no_defs"
@@ -40,11 +38,12 @@ workhorse <- function(x) {
     xy <- st_set_crs(xy, crsll)
     xy <- st_transform(xy, crstm)
     e <- extract(rl, xy)
-    ai_predict(x$spp,
+    z <- ai_predict(x$spp,
         spclim=data.frame(XY, e),
         veghf=x$veghf,
         soilhf=x$soilhf,
         i=x$i)
+    e$wN * z$north + (1-e$wN) * z$south
 }
 
 handle <- function(req) {
@@ -65,9 +64,8 @@ httpuv::runServer(
                     status = 422L,
                     headers = list('Content-Type' = 'application/json'),
                     body = jsonlite::toJSON(list(
-                        code="422 Unprocessable Entity",
-                        message=as.character(out)
-                    )))
+                        code="422 - Unprocessable Entity",
+                        message=as.character(out))))
             } else {
                 list(
                     status = 200L,

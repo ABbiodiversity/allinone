@@ -42,13 +42,16 @@ ai_load_coefs <- function(dir=NULL) {
         dir <- getOption("allinone")$dir
     fn <- file.path(dir, "COEFS.RData")
     .msg("Loading coefs")
-    load(fn, envir=.ai1)
+    out <- try(load(fn, envir=.ai1))
+    if (inherits(out, "try-error"))
+        stop("Use ai_download_coefs() to download coefs")
+    out
 }
-
 
 #' @export
 #' @rdname coefs
 ai_unload_coefs <- function() {
-    .msg("Loading coefs")
+    if (.loaded())
+        .msg("Unloading coefs")
     rm(list=ls(envir=.ai1), envir=.ai1)
 }

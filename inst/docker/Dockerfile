@@ -8,7 +8,7 @@ RUN addgroup --system app && adduser --system --ingroup app app
 WORKDIR /home/app
 RUN git clone https://github.com/ABbiodiversity/allinone-coefs.git
 COPY index.R .
-
+RUN R -q -e "remotes::install_github('ABbiodiversity/allinone')"
 RUN chown app:app -R /home/app
 USER app
 
