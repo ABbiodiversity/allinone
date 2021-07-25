@@ -302,17 +302,18 @@ In production, run the image with port mapping (-p host:container) in the backgr
 docker run -d --name aiapi -p 8080:8080 $REGISTRY/$TAG
 ```
 
-Now use curl to make a request and test the API, it can take a single value, or a vector of values for long, lat, veghf, and soilhf:
+Now use curl to make a request and test the API, it can take a single value, or a vector of values for long, lat, veghf, and soilhf. It is best to provide both `veghf` and `soilhf` and let the model averaging do it's job, i.e. use `"UNK"` soil class in the north. The weights are extracted from a raster (wN) too.
 
 ```bash
-## curl
-curl http://localhost:8080/ -d \
-  '{"long":[-111.1588],"lat":[55.0714],"veghf":["Mixedwood2"],"soilhf":["RapidDrain"],"spp":["AlderFlycatcher"],"i":[2]}'
-# [0.0605]
-
+## vector input with model averaging
 curl http://localhost:8080/ -d \
   '{"long":[-112.6178,-111.1588],"lat":[49.5851,55.0714],"veghf":["Crop","Mixedwood2"],"soilhf":["Crop","RapidDrain"],"spp":["AlderFlycatcher"],"i":[1]}'
 # [0,0.0681]
+
+## single valued input with averaging
+curl http://localhost:8080/ -d \
+  '{"long":[-111.1588],"lat":[55.0714],"veghf":["Mixedwood2"],"soilhf":["RapidDrain"],"spp":["AlderFlycatcher"],"i":[2]}'
+# [0.0605]
 ```
 
 See the logs:
