@@ -339,3 +339,5 @@ It is advised to add the Docker background process to systemd or use Docker Comp
 See the `inst/docker/docker-compose.yml` file for details. Deploy with `docker-compose up -d` which will publish the app on port 8080.
 
 When the containers are already running, and the configuration or images have changed after the container's creation, `docker-compose up` picks up the changes. Tear down with `docker-compose down`.
+
+This Docker image is not very lean because the parent image is huge. Install only the necessary dependencies with a smaller parent image if size is a concern.
