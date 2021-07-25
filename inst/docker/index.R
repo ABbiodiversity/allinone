@@ -43,7 +43,15 @@ workhorse <- function(x) {
         veghf=x$veghf,
         soilhf=x$soilhf,
         i=x$i)
-    e[,"wN"] * z$north + (1-e[,"wN"]) * z$south
+    if (!is.null(z$north) && !is.null(z$south))
+        out <- e[,"wN"] * z$north + (1-e[,"wN"]) * z$south
+    if (is.null(z$north) && !is.null(z$south))
+        out <- z$south
+    if (!is.null(z$north) && is.null(z$south))
+        out <- z$north
+    if (is.null(z$north) && is.null(z$south))
+        out <- numeric(0)
+    out
 }
 
 handle <- function(req) {
