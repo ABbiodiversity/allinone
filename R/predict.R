@@ -114,7 +114,7 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
         cfn <- if (type == "S")
             NULL else .ai1$COEFS[[taxon]]$north$joint[spp,,]
         cfs <- if (type == "N")
-            NULL else .ai1$COEFS[[taxon]]$south$joint[spp,,]
+            NULL else rbind(.ai1$COEFS[[taxon]]$south$joint[spp,,], UNK=0)
         FUN <- function (eta)
             pmin(pmax(exp(eta), .Machine$double.eps), .Machine$double.xmax)
     } else {
@@ -191,12 +191,12 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
             ## habitat
             if (Link$S == "Log") {
                 # pa
-                tmps <- c(cfs_pa, SnowIce=0)
+                tmps <- c(cfs_pa, SnowIce=0, UNK=0)
                 tmps <- stats::qlogis(tmps)
                 tmps[is.na(tmps)] <- -10^4
                 bscrp <- tmps[colnames(p_soilhf)] # current land cover
                 # agp
-                tmps <- c(cfs_agp, SnowIce=0)
+                tmps <- c(cfs_agp, SnowIce=0, UNK=0)
                 tmps <- log(tmps)
                 tmps[is.na(tmps)] <- -10^4
                 bscra <- tmps[colnames(p_soilhf)] # current land cover
@@ -208,12 +208,12 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
                 NScr <- as.matrix(p_soilhf * muscr)
             } else {
                 # pa
-                tmpsp <- c(cfs_pa, SnowIce=0)
+                tmpsp <- c(cfs_pa, SnowIce=0, UNK=0)
                 tmpsp <- stats::qlogis(tmpsp)
                 tmpsp[is.na(tmpsp)] <- -10^4
                 bscrp <- tmpsp[colnames(p_soilhf)] # current land cover
                 # agp
-                tmpsa <- c(cfs_agp, SnowIce=0)
+                tmpsa <- c(cfs_agp, SnowIce=0, UNK=0)
                 tmpsa <- log(tmpsa)
                 tmpsa[is.na(tmpsa)] <- -10^4
                 bscra <- tmpsa[colnames(p_soilhf)] # current land cover

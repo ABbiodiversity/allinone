@@ -59,3 +59,6 @@ unlist(ai_predict(spp, spclim=spclim[1,], veghf="CropX", soilhf="CropX"))
 unlist(ai_predict(spp, spclim=spclim[1,], veghf="Crop", soilhf=NULL))
 unlist(ai_predict(spp, spclim=spclim[1,], veghf=NULL, soilhf="Crop"))
 unlist(ai_predict(spp, spclim=spclim[1,], veghf=NULL, soilhf=NULL))
+
+unlist(ai_predict(spp, spclim=spclim[1,], veghf="Crop", soilhf="UNK"))
+unlist(ai_predict("Coyote", spclim=spclim[1,], veghf="Crop", soilhf="UNK"))
