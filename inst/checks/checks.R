@@ -43,22 +43,19 @@ for (j in 1:nrow(tab)) {
 table(tab$Group, tab$OK)
 
 
-if (FALSE) {
+
+## ---
+
+library(allinone)
 ai_load_coefs()
+load(system.file("extdata/example.RData", package="allinone"))
+spp <- "AlderFlycatcher"
 
-.ai1 <- list(COEFS=allinone:::.ai1$COEFS)
-source("R/internals.R")
-source("R/predict.R")
-check_fun("Coyote", 1)
-check_fun("Ovenbird", 1)
+unlist(ai_predict(spp, spclim=spclim[1,], veghf="Crop", soilhf="Crop"))
+unlist(ai_predict(spp, spclim=spclim[1,], veghf="CropX", soilhf="Crop"))
+unlist(ai_predict(spp, spclim=spclim[1,], veghf="Crop", soilhf="CropX"))
+unlist(ai_predict(spp, spclim=spclim[1,], veghf="CropX", soilhf="CropX"))
 
-names(allinone:::.ai1)
-
-spp <- "Coyote"
-i <- 1
-    z1 <- ai_predict(spp,
-      spclim=spclim,
-      veghf=p_veghf,
-      soilhf=p_soilhf,
-      i=i)
-}
+unlist(ai_predict(spp, spclim=spclim[1,], veghf="Crop", soilhf=NULL))
+unlist(ai_predict(spp, spclim=spclim[1,], veghf=NULL, soilhf="Crop"))
+unlist(ai_predict(spp, spclim=spclim[1,], veghf=NULL, soilhf=NULL))
