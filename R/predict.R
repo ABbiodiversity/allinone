@@ -26,6 +26,10 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
     TMP <- Matrix(sparse=TRUE)
 
     VECTOR <- FALSE
+    if (!length(veghf))
+        veghf <- NULL
+    if (!length(soilhf))
+        soilhf <- NULL
     if (!is.null(veghf)) {
         if (is.null(dim(veghf))) {
             if (length(unique(veghf)) > 1) {
@@ -64,6 +68,16 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
     } else {
         p_soilhf <- NULL
     }
+
+    ## check soil/veg classes: mismatches lead error
+    if (!all(colnames(p_soilhf) %in% .lt_names()$south))
+        .msg(sprintf("Unknown soil/HF classes: %s",
+            paste(setdiff(colnames(p_soilhf), .lt_names()$south),
+                collapse=", ")), 4)
+    if (!all(colnames(p_veghf) %in% .lt_names()$north))
+        .msg(sprintf("Unknown veg/HF classes: %s",
+            paste(setdiff(colnames(p_veghf), .lt_names()$north),
+                collapse=", ")), 4)
 
     ## pull out N/S species list based on taxon
     taxon <- .get_taxon(spp)
@@ -294,9 +308,12 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
     }
 
     if (VECTOR) {
-        NNcr <- rowSums(NNcr)
-        NScr <- rowSums(NScr)
+        if (!is.null(NNcr))
+            NNcr <- rowSums(NNcr)
+        if (!is.null(NScr))
+            NScr <- rowSums(NScr)
     }
+
     list(north=NNcr, south=NScr)
 
 }

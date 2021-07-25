@@ -109,6 +109,32 @@
     .msg(sprintf("Coefs not available for species %s", spp), 4)
 }
 
+.lt_names <- function() {
+    list(north = c("DeciduousR", "Deciduous1", "Deciduous2", "Deciduous3",
+        "Deciduous4", "Deciduous5", "Deciduous6", "Deciduous7", "Deciduous8",
+        "MixedwoodR", "Mixedwood1", "Mixedwood2", "Mixedwood3", "Mixedwood4",
+        "Mixedwood5", "Mixedwood6", "Mixedwood7", "Mixedwood8", "PineR",
+        "Pine1", "Pine2", "Pine3", "Pine4", "Pine5", "Pine6", "Pine7",
+        "Pine8", "WhiteSpruceR", "WhiteSpruce1", "WhiteSpruce2", "WhiteSpruce3",
+        "WhiteSpruce4", "WhiteSpruce5", "WhiteSpruce6", "WhiteSpruce7",
+        "WhiteSpruce8", "TreedBogR", "TreedBog1", "TreedBog2", "TreedBog3",
+        "TreedBog4", "TreedBog5", "TreedBog6", "TreedBog7", "TreedBog8",
+        "TreedFenR", "TreedFen1", "TreedFen2", "TreedFen3", "TreedFen4",
+        "TreedFen5", "TreedFen6", "TreedFen7", "TreedFen8", "TreedSwamp",
+        "GrassHerb", "Shrub", "GraminoidFen", "Marsh", "ShrubbyBog",
+        "ShrubbyFen", "ShrubbySwamp", "Water", "Urban", "Rural", "Industrial",
+        "Mine", "Wellsites", "EnSoftLin", "EnSeismic", "HardLin", "TrSoftLin",
+        "Crop", "RoughP", "TameP", "CCDeciduousR", "CCDeciduous1", "CCDeciduous2",
+        "CCDeciduous3", "CCDeciduous4", "CCMixedwoodR", "CCMixedwood1",
+        "CCMixedwood2", "CCMixedwood3", "CCMixedwood4", "CCPineR", "CCPine1",
+        "CCPine2", "CCPine3", "CCPine4", "CCWhiteSpruceR", "CCWhiteSpruce1",
+        "CCWhiteSpruce2", "CCWhiteSpruce3", "CCWhiteSpruce4", "Bare",
+        "SnowIce"),
+    south = c("ClaySub", "Other", "RapidDrain", "Loamy",
+        "SandyLoam", "ThinBreak", "Blowout", "UNK", "Water", "Urban",
+        "Rural", "Industrial", "Mine", "Wellsites", "EnSoftLin", "EnSeismic",
+        "HardLin", "TrSoftLin", "Crop", "RoughP", "TameP"))
+}
 
 ## lookup tables
 .lt <- function() {

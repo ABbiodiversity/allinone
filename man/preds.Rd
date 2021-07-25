@@ -18,9 +18,6 @@ ai_predict(spp, spclim, veghf = NULL, soilhf = NULL, i = 1)
 
 \item{i}{Bootstrap ID (1-100).}
 }
-\value{
-Stuff.
-}
 \description{
 Predict based on input data.
 }
