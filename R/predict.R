@@ -83,7 +83,7 @@ ai_predict <- function(spp, spclim, veghf=NULL, soilhf=NULL, i=1) {
     taxon <- .get_taxon(spp)
 
     if (taxon %in% c("mammals", "habitats") && i > 1)
-        .msg(sprintf("Bootstrap .ai1$COEFS not available for species %s (%s)", spp, taxon), 4)
+        .msg(sprintf("Bootstrap coefs (i>1) not available for species %s (%s)", spp, taxon), 4)
     .msg(sprintf("Making predictions for species %s (%s) i=%s", spp, taxon, i))
     if (i > 100)
         .msg("Bootstrap ID cannot be > 100", 4)
