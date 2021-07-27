@@ -231,7 +231,7 @@ For batch processing, look into the `inst/docker` folder. The API can be deploye
 
 ### Request
 
-Pass is a JSON object (Content type: application/json) as the request body with longitude, latitude, veg/soil/HF classes, the species ID and the bootstrap ID (all these arrays in side an object).
+Pass a JSON object (Content type: application/json) as the request body with longitude, latitude, veg/soil/HF classes, the species ID and the bootstrap ID (all these arrays in side an object).
 
 ```json
 {
