@@ -20,7 +20,7 @@ dir <- "~/repos/allinone-coefs"
 ```
 
 If you don’t need the spatial raster files from the
-ABbiodiversity/allinone-coefs, the `ai_doanload_coefs()` function will
+ABbiodiversity/allinone-coefs, the `ai_download_coefs()` function will
 grab the coefficients for you and you’ll be ready to roll:
 
 ``` r
