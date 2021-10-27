@@ -192,8 +192,8 @@ str(z1)
 
 #### Sector effects
 
-Having such a matrix format is ideal when further aggregation is to e
-performad on the output, e.g. when calculating sector effects. In the
+Having such a matrix format is ideal when further aggregation is to be
+performed on the output, e.g. when calculating sector effects. In the
 example we use only the current landscape here, and show how to use
 model weights (`wN`) to average the north and south results in the
 overlap zone:
