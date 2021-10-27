@@ -357,9 +357,9 @@ deployed using Docker or Docker Compose.
 
 ### Request
 
-Pass is a JSON object (Content type: application/json) as the request
+Pass in a JSON object (Content type: application/json) as the request
 body with longitude, latitude, veg/soil/HF classes, the species ID and
-the bootstrap ID (all these arrays in side an object).
+the bootstrap ID (all these arrays inside an object).
 
 ``` json
 {
@@ -476,5 +476,5 @@ See the `inst/docker/docker-compose.yml` file for details. Deploy with
 `docker-compose up -d` which will publish the app on port 8080.
 
 When the containers are already running, and the configuration or images
-have changed after the container’s creation, `docker-compose up` picks
+have changed after the container's creation, `docker-compose up` picks
 up the changes. Tear down with `docker-compose down`.
