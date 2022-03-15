@@ -4,7 +4,7 @@
     packageStartupMessage(paste(pkgname, ver[1], "\t", ver[2]))
     if (is.null(getOption("allinone"))) {
         options("allinone" = list(
-            url="https://abbiodiversity.github.io/allinone-coefs/v2020",
+            url="https://abbiodiversity.github.io/allinone-coefs/v2022",
             dir=".",
             verbose=1))
     }
